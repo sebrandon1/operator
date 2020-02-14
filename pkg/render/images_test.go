@@ -22,24 +22,36 @@ import (
 
 var _ = Describe("No registry override", func() {
 	It("should render a calico image correctly", func() {
-		Expect(constructImage(NodeImageNameCalico, "")).To(Equal("docker.io/calico/node:" + components.VersionCalicoNode))
+		Expect(constructImage(NodeImageNameCalico, "", "")).To(Equal("docker.io/calico/node:" + components.VersionCalicoNode))
 	})
 	It("should render a tigera image correctly", func() {
-		Expect(constructImage(NodeImageNameTigera, "")).To(Equal("gcr.io/unique-caldron-775/cnx/tigera/cnx-node:" + components.VersionTigeraNode))
+		Expect(constructImage(NodeImageNameTigera, "", "")).To(Equal("gcr.io/unique-caldron-775/cnx/tigera/cnx-node:" + components.VersionTigeraNode))
 	})
 	It("should render an ECK image correctly", func() {
-		Expect(constructImage(ECKOperatorImageName, "")).To(Equal("docker.elastic.co/eck/eck-operator:" + components.VersionECKOperator))
+		Expect(constructImage(ECKOperatorImageName, "", "")).To(Equal("docker.elastic.co/eck/eck-operator:" + components.VersionECKOperator))
 	})
 })
 
 var _ = Describe("registry override", func() {
 	It("should render a calico image correctly", func() {
-		Expect(constructImage(NodeImageNameCalico, "quay.io/")).To(Equal("quay.io/calico/node:" + components.VersionCalicoNode))
+		Expect(constructImage(NodeImageNameCalico, "quay.io/", "")).To(Equal("quay.io/calico/node:" + components.VersionCalicoNode))
 	})
 	It("should render a tigera image correctly", func() {
-		Expect(constructImage(NodeImageNameTigera, "quay.io/")).To(Equal("quay.io/tigera/cnx-node:" + components.VersionTigeraNode))
+		Expect(constructImage(NodeImageNameTigera, "quay.io/", "")).To(Equal("quay.io/tigera/cnx-node:" + components.VersionTigeraNode))
 	})
 	It("should render an ECK image correctly", func() {
-		Expect(constructImage(ECKOperatorImageName, "quay.io/")).To(Equal("quay.io/eck/eck-operator:" + components.VersionECKOperator))
+		Expect(constructImage(ECKOperatorImageName, "quay.io/", "")).To(Equal("quay.io/eck/eck-operator:" + components.VersionECKOperator))
+	})
+})
+
+var _ = Describe("registry and namespace override", func() {
+	It("should render a calico image correctly", func() {
+		Expect(constructImage(NodeImageNameCalico, "custom-reg.io/", "my-namespace")).To(Equal("custom-reg.io/my-namespace/node:" + components.VersionCalicoNode))
+	})
+	It("should render a tigera image correctly", func() {
+		Expect(constructImage(NodeImageNameTigera, "custom-reg.io/", "my-namespace")).To(Equal("custom-reg.io/my-namespace/cnx-node:" + components.VersionTigeraNode))
+	})
+	It("should render an ECK image correctly", func() {
+		Expect(constructImage(ECKOperatorImageName, "custom-reg.io/", "my-namespace")).To(Equal("custom-reg.io/my-namespace/eck-operator:" + components.VersionECKOperator))
 	})
 })

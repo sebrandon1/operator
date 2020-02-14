@@ -33,6 +33,10 @@ type InstallationSpec struct {
 	// +optional
 	Registry string `json:"registry,omitempty"`
 
+	// CalicoNamespace is the default namespace to apply to calico-only container images.  If specified,
+	// all Calico images will use this namespace instead of "calico/".
+	CalicoNamespace string `json:"calicoNamespace,omitempty"`
+
 	// ImagePullSecrets is an array of references to container registry pull secrets to use. These are
 	// applied to all images to be pulled.
 	// +optional

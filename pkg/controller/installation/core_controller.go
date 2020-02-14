@@ -238,6 +238,10 @@ func fillDefaults(instance *operator.Installation) error {
 		instance.Spec.Registry = fmt.Sprintf("%s/", instance.Spec.Registry)
 	}
 
+	if len(instance.Spec.CalicoNamespace) != 0 && !strings.HasSuffix(instance.Spec.CalicoNamespace, "/") {
+		instance.Spec.CalicoNamespace = fmt.Sprintf("%s/", instance.Spec.CalicoNamespace)
+	}
+
 	if len(instance.Spec.Variant) == 0 {
 		// Default to installing Calico.
 		instance.Spec.Variant = operator.Calico

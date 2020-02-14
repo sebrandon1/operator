@@ -36,11 +36,13 @@ const (
 
 // This section contains images used when installing open-source Calico.
 const (
-	NodeImageNameCalico            = "calico/node:" + components.VersionCalicoNode
-	CNIImageName                   = "calico/cni:" + components.VersionCalicoCNI
-	TyphaImageNameCalico           = "calico/typha:" + components.VersionCalicoTypha
-	KubeControllersImageNameCalico = "calico/kube-controllers:" + components.VersionCalicoKubeControllers
-	FlexVolumeImageName            = "calico/pod2daemon-flexvol:" + components.VersionFlexVolume
+	DefaultCalicoRegistrySubNamespace = "calico/"
+
+	NodeImageNameCalico            = "node:" + components.VersionCalicoNode
+	CNIImageName                   = "cni:" + components.VersionCalicoCNI
+	TyphaImageNameCalico           = "typha:" + components.VersionCalicoTypha
+	KubeControllersImageNameCalico = "kube-controllers:" + components.VersionCalicoKubeControllers
+	FlexVolumeImageName            = "pod2daemon-flexvol:" + components.VersionFlexVolume
 )
 
 // This section contains images used when installing Tigera Secure.
@@ -84,14 +86,14 @@ const (
 )
 
 // constructImage returns the fully qualified image to use, including registry and version.
-func constructImage(imageName string, registry string) string {
-	// If a user supplied a registry, use that for all images.
-	if registry != "" {
-		return fmt.Sprintf("%s%s", registry, imageName)
-	}
+func constructImage(imageName string, registry string, namespace string) string {
 
-	// Otherwise, default the registry based on component.
+	// Default the registry unless otherwise specified
 	reg := TigeraRegistry
+
+	// Default the sub-namespace unless otherwise specified
+	ns := DefaultCalicoRegistrySubNamespace
+
 	switch imageName {
 	case NodeImageNameCalico,
 		CNIImageName,
@@ -99,9 +101,19 @@ func constructImage(imageName string, registry string) string {
 		KubeControllersImageNameCalico,
 		FlexVolumeImageName:
 
+		// Set defaults
 		reg = CalicoRegistry
+		ns = DefaultCalicoRegistryNamespace
 	case ECKElasticsearchImageName, ECKOperatorImageName:
 		reg = ECKRegistry
 	}
-	return fmt.Sprintf("%s%s", reg, imageName)
+
+	// Override the registry and namespace if specified
+	if registry != "" {
+		reg = registry
+	}
+	if namespace != "" {
+		ns = namespace
+	}
+	return fmt.Sprintf("%s%s%s", reg, ns, imageName)
 }

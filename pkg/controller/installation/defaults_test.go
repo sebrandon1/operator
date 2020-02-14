@@ -31,6 +31,7 @@ var _ = Describe("Defaulting logic tests", func() {
 		fillDefaults(instance)
 		Expect(instance.Spec.Variant).To(Equal(operator.Calico))
 		Expect(instance.Spec.Registry).To(BeEmpty())
+		Expect(instance.Spec.CalicoNamespace).To(BeEmpty())
 		v4pool := render.GetIPv4Pool(instance.Spec.CalicoNetwork)
 		Expect(v4pool).ToNot(BeNil())
 		Expect(v4pool.CIDR).To(Equal("192.168.0.0/16"))
@@ -44,6 +45,7 @@ var _ = Describe("Defaulting logic tests", func() {
 		fillDefaults(instance)
 		Expect(instance.Spec.Variant).To(Equal(operator.TigeraSecureEnterprise))
 		Expect(instance.Spec.Registry).To(BeEmpty())
+		Expect(instance.Spec.CalicoNamespace).To(BeEmpty())
 		v4pool := render.GetIPv4Pool(instance.Spec.CalicoNetwork)
 		Expect(v4pool).ToNot(BeNil())
 		Expect(v4pool.CIDR).To(Equal("192.168.0.0/16"))
@@ -105,6 +107,16 @@ var _ = Describe("Defaulting logic tests", func() {
 		}
 		fillDefaults(instance)
 		Expect(instance.Spec.Registry).To(Equal("test-reg/"))
+	})
+
+	It("should correct missing slashes on calico namespace", func() {
+		instance := &operator.Installation{
+			Spec: operator.InstallationSpec{
+				CalicoNamespace: "custom-ns"
+			},
+		}
+		fillDefaults(instance)
+		Expect(instance.Spec.CalicoNamespace).To(Equal("custom-ns/"))
 	})
 
 	table.DescribeTable("All pools should have all fields set from mergeAndFillDefaults function",

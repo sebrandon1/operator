@@ -172,6 +172,11 @@ spec:
                 Docker images. If specified, all Calico and Tigera Secure images will
                 be pulled from this registry.
               type: string
+            calicoNamespace:
+              description: CalicoNamespace is the default registry namespace to apply
+                to Calico components.  If specified, all Calico images will default
+                their namespace to this value.
+              type: string
             variant:
               description: 'Variant is the product to install - one of Calico or TigeraSecureEnterprise
                 Default: Calico'
